@@ -175,6 +175,6 @@ nvim
 
 ---
 
-**Creado por [hen-x](https://github.com/hen-x)**
+**Creado por [hen-x](https://github.com/h3n-x)**
 
 > 🚀 **¡Disfruta de un entorno Python productivo y elegante con Neovim!** 🚀
