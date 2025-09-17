@@ -174,7 +174,7 @@ return {
               local venv = vim.env.VIRTUAL_ENV or vim.env.CONDA_DEFAULT_ENV
               if venv then
                 local venv_name = vim.fn.fnamemodify(venv, ":t")
-                return "🐍 " .. venv_name
+                return ">" .. venv_name
               end
               return ""
             end,
@@ -228,6 +228,21 @@ return {
             end,
             icon = "󰒋",
             color = { fg = colors.colors.color6 },
+          },
+          -- Avante status
+          {
+            function()
+              local avante_ok, avante = pcall(require, "avante")
+              if avante_ok and avante.is_sidebar_open() then
+                return ">"
+              end
+              return ""
+            end,
+            color = { fg = colors.colors.color4 },
+            cond = function()
+              local avante_ok = pcall(require, "avante")
+              return avante_ok
+            end,
           },
           -- Git diff
           {

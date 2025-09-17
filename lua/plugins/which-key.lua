@@ -31,6 +31,8 @@ return {
         { "<leader>b", group = "buffer" },
         { "<leader>c", group = "code" },
         { "<leader>cc", group = "copilot" },
+        { "<leader>a", group = "avante" },
+        { "<leader>ax", group = "avante shortcuts" },
         { "<leader>d", group = "debug" },
         { "<leader>f", group = "file/find" },
         { "<leader>g", group = "git" },
@@ -187,6 +189,31 @@ return {
       { "<leader>ou", desc = "Open URL under cursor" },
       { "<leader>ox", desc = "Open with Default App" },
       
+      -- Avante operations
+      { "<leader>aa", desc = "Ask Avante" },
+      { "<leader>an", desc = "New Avante Session" },
+      { "<leader>ae", desc = "Edit with Avante" },
+      { "<leader>ar", desc = "Refresh Avante" },
+      { "<leader>af", desc = "Focus Avante" },
+      { "<leader>aS", desc = "Stop Avante" },
+      { "<leader>az", desc = "Avante Zen Mode" },
+      { "<leader>at", desc = "Toggle Avante" },
+      { "<leader>ad", desc = "Toggle Avante Debug" },
+      { "<leader>aC", desc = "Toggle Selection Mode" },
+      { "<leader>as", desc = "Toggle Suggestions" },
+      { "<leader>aR", desc = "Toggle Repo Map" },
+      { "<leader>ac", desc = "Add Current Buffer" },
+      { "<leader>aB", desc = "Add All Buffers" },
+      { "<leader>a?", desc = "Select Model" },
+      { "<leader>ah", desc = "Select History" },
+      
+      -- Avante shortcuts
+      { "<leader>axe", desc = "Explain Code" },
+      { "<leader>axo", desc = "Optimize Code" },
+      { "<leader>axt", desc = "Generate Tests" },
+      { "<leader>axd", desc = "Add Documentation" },
+      { "<leader>axr", desc = "Refactor Code" },
+      
       -- Run/Execute operations
       { "<leader>rm", desc = "Run make" },
       { "<leader>rr", desc = "Run current file" },
@@ -217,6 +244,7 @@ return {
         wk.add({
           { "<leader>rp", "<cmd>!python %<cr>", desc = "Run Python file", buffer = true },
           { "<leader>rd", function() vim.cmd("!python -m pdb " .. vim.fn.expand("%")) end, desc = "Debug Python file", buffer = true },
+          { "<leader>aP", desc = "Python Code Review", buffer = true },
         })
       end,
     })
@@ -239,6 +267,7 @@ return {
           { "<leader>mp", "<cmd>MarkdownPreview<cr>", desc = "Preview", buffer = true },
           { "<leader>ms", "<cmd>MarkdownPreviewStop<cr>", desc = "Stop Preview", buffer = true },
           { "<leader>mt", "<cmd>MarkdownPreviewToggle<cr>", desc = "Toggle Preview", buffer = true },
+          { "<leader>aM", desc = "Improve Markdown", buffer = true },
         })
       end,
     })

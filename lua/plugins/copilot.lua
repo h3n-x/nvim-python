@@ -206,6 +206,7 @@ return {
     "zbirenbaum/copilot.lua",
     cmd = "Copilot",
     event = "InsertEnter",
+    priority = 100, -- Higher priority to load before Avante
     config = function()
       require("copilot").setup({
         suggestion = { 
@@ -221,7 +222,7 @@ return {
             dismiss = "<C-e>",
           },
         },
-        panel = { enabled = false },
+        panel = { enabled = false }, -- Disabled in favor of Avante
         filetypes = {
           yaml = true,
           markdown = true,
@@ -245,6 +246,8 @@ return {
           bash = true,
           sh = true,
           sql = true,
+          -- Enable for Avante buffers
+          Avante = true,
         },
         copilot_node_command = 'node',
         server_opts_overrides = {
@@ -256,6 +259,15 @@ return {
             }
           },
         }
+      })
+      
+      -- Integration with Avante
+      vim.api.nvim_create_autocmd("User", {
+        pattern = "AvanteOpened",
+        callback = function()
+          -- Ensure Copilot is enabled when Avante opens
+          vim.cmd("Copilot enable")
+        end,
       })
     end,
   },

@@ -322,5 +322,10 @@ return {
         vim.api.nvim_set_hl(0, group, opts)
       end
     end,
+    -- Avante integration
+    {
+      "yetone/avante.nvim",
+      optional = true,
+    },
   },
 }

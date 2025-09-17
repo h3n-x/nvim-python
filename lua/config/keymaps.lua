@@ -264,6 +264,14 @@ vim.api.nvim_create_autocmd("FileType", {
   pattern = "python",
   callback = function()
     map("n", "<leader>rr", "<cmd>!python %<cr>", { desc = "Run Python file", buffer = true })
+    -- Avante integration for Python
+    map("n", "<leader>aP", function()
+      if pcall(require, "avante.api") then
+        require("avante.api").ask({
+          question = "Review this Python code for best practices, performance, and potential issues. Suggest improvements.",
+        })
+      end
+    end, { desc = "Avante Python review", buffer = true })
   end,
 })
 
@@ -272,6 +280,14 @@ vim.api.nvim_create_autocmd("FileType", {
   pattern = { "sh", "bash", "zsh" },
   callback = function()
     map("n", "<leader>rr", "<cmd>!chmod +x % && ./%<cr>", { desc = "Run script", buffer = true })
+    -- Avante integration for shell scripts
+    map("n", "<leader>aS", function()
+      if pcall(require, "avante.api") then
+        require("avante.api").ask({
+          question = "Review this shell script for best practices, security issues, and potential improvements.",
+        })
+      end
+    end, { desc = "Avante shell review", buffer = true })
   end,
 })
 
@@ -280,5 +296,13 @@ vim.api.nvim_create_autocmd("FileType", {
   pattern = "markdown",
   callback = function()
     map("n", "<leader>mp", "<cmd>MarkdownPreview<cr>", { desc = "Markdown Preview", buffer = true })
+    -- Avante integration for Markdown
+    map("n", "<leader>aM", function()
+      if pcall(require, "avante.api") then
+        require("avante.api").ask({
+          question = "Improve this markdown document's structure, clarity, and formatting.",
+        })
+      end
+    end, { desc = "Avante markdown improve", buffer = true })
   end,
 })

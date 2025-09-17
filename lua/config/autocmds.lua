@@ -376,6 +376,38 @@ if vim.env.XDG_SESSION_DESKTOP == "Hyprland" or vim.env.HYPRLAND_INSTANCE_SIGNAT
 end
 
 -- ========================================================================================
+-- Avante Integration
+-- ========================================================================================
+
+-- Avante-specific autocommands
+api.nvim_create_autocmd("FileType", {
+  group = augroup("avante_integration"),
+  pattern = "Avante",
+  callback = function()
+    -- Set up Avante buffer-specific settings
+    vim.opt_local.wrap = true
+    vim.opt_local.linebreak = true
+    vim.opt_local.breakindent = true
+    vim.opt_local.spell = false
+    vim.opt_local.number = false
+    vim.opt_local.relativenumber = false
+    vim.opt_local.signcolumn = "no"
+    
+    -- Enable Copilot for Avante buffers
+    vim.b.copilot_enabled = true
+  end,
+})
+
+-- Auto-enable Copilot when Avante is active
+api.nvim_create_autocmd("User", {
+  group = augroup("avante_copilot"),
+  pattern = "AvanteOpened",
+  callback = function()
+    vim.cmd("Copilot enable")
+  end,
+})
+
+-- ========================================================================================
 -- LSP Attach Settings
 -- ========================================================================================
 
