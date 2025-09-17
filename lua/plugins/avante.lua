@@ -13,7 +13,7 @@ return {
     -- Core Configuration
     -- ========================================================================================
     debug = false,
-    mode = "agentic", -- "agentic" | "legacy"
+    mode = "legacy", -- "agentic" | "legacy"
     provider = "copilot", -- Use GitHub Copilot as primary provider
     auto_suggestions_provider = "copilot", -- Use Copilot for auto-suggestions
     memory_summary_provider = "copilot", -- Use Copilot for memory summaries
@@ -27,10 +27,10 @@ return {
         model = "gpt-4o-2024-11-20",
         proxy = nil,
         allow_insecure = false,
-        timeout = 30000,
+        timeout = 120000, -- Increased from 60000 to 120000 (2 minutes)
         context_window = 64000,
         extra_request_body = {
-          temperature = 0.75,
+          temperature = 0.3, -- Reduced from 0.75 to 0.3
           max_tokens = 20480,
         },
       },
@@ -45,14 +45,22 @@ return {
       auto_suggestions_respect_ignore = true,
       auto_set_highlight_group = true,
       auto_set_keymaps = true,
-      auto_apply_diff_after_generation = false, -- Manual control over applying changes
+      -- Enable automatic diff application for direct file editing
+      auto_apply_diff_after_generation = true, -- Allow automatic changes
       jump_result_buffer_on_finish = false,
       support_paste_from_clipboard = true,
-      minimize_diff = true,
+      minimize_diff = false, -- Changed from true to false for clearer diffs
       enable_token_counting = true,
       use_cwd_as_project_root = true,
       auto_focus_on_diff_view = true,
-      auto_approve_tool_permissions = false, -- Show permission prompts for security
+      -- Enable automatic tool permissions for file editing
+      auto_approve_tool_permissions = {
+        "edit_file",
+        "replace_in_file", 
+        "create_file",
+        "delete_file"
+      }, -- Changed from true to specific permissions
+      
       auto_check_diagnostics = true,
       enable_fastapply = true, -- Enable fast apply for better UX
       include_generated_by_commit_line = true,
@@ -262,7 +270,9 @@ return {
     -- ========================================================================================
     diff = {
       autojump = true,
-      override_timeoutlen = 500,
+      override_timeoutlen = 1000, -- Increased from 500 to 1000
+      list_opener = "copen",
+      debug = false,
     },
     
     -- ========================================================================================
@@ -486,5 +496,22 @@ return {
         end, { desc = "Avante: Improve markdown", buffer = true })
       end,
     })
+    
+    -- Add debug logging to troubleshoot issues
+    vim.api.nvim_create_user_command("AvanteDebug", function()
+      vim.cmd("AvanteToggleDebug")
+      print("Avante debug mode toggled")
+    end, {})
+    
+    -- Add command to check Copilot status
+    vim.api.nvim_create_user_command("AvanteCheckCopilot", function()
+      local copilot_status = require("copilot.client").is_disabled()
+      if copilot_status then
+        print("Copilot is disabled - run :Copilot auth to authenticate")
+      else
+        print("Copilot is active and authenticated")
+      end
+    end, {})
   end,
 }
+
