@@ -1,0 +1,894 @@
+avante.nvim is a Neovim plugin designed to emulate the behaviour of the Cursor AI IDE. It provides users with AI-driven code suggestions and the ability to apply these recommendations directly to their source files with minimal effort.
+
+Note
+
+This project is undergoing rapid iterations, and many exciting features will be added successively. Stay tuned!
+
+Avante Zen Mode
+
+Due to the prevalence of claude code, it is clear that this is an era of Coding Agent CLIs. As a result, there are many arguments like: in the Vibe Coding era, editors are no longer needed; you only need to use the CLI in the terminal. But have people realized that for more than half a century, Terminal-based Editors have solved and standardized the biggest problem with Terminal-based applications — that is, the awkward TUI interactions! No matter how much these Coding Agent CLIs optimize their UI/UX, their UI/UX will always be a subset of Terminal-based Editors (Vim, Emacs)! They cannot achieve Vim’s elegant action + text objects abstraction (imagine how you usually edit large multi-line prompts in an Agent CLI), nor can they leverage thousands of mature Vim/Neovim plugins to help optimize TUI UI/UX—such as easymotions and so on. Moreover, when they want to view or modify code, they often have to jump into other applications which forcibly interrupts the UI/UX experience.
+
+Therefore, Avante’s Zen Mode was born! It looks like a Vibe Coding Agent CLI but it is completely Neovim underneath. So you can use your muscle-memory Vim operations and those rich and mature Neovim plugins on it. At the same time, by leveraging ACP it has all capabilities of claude code / gemini-cli / codex! Why not enjoy both?
+
+Now all you need to do is alias this command to avante; then every time you simply type avante just like using claude code and enter Avante’s Zen Mode!
+
+alias avante='nvim -c "lua vim.defer_fn(function()require(\"avante.api\").zen_mode()end, 100)"'
+
+The effect is as follows:
+Avante Zen Mode
+Project instructions with avante.md
+The `avante.md` file allows you to provide project-specific context and instructions to the ai. this file should be placed in your project root and will be automatically referenced during all interactions with avante.
+
+The `avante.md` file allows you to provide project-specific context and instructions to the ai. this file should be placed in your project root and will be automatically referenced during all interactions with avante.
+
+The `avante.md` file allows you to provide project-specific context and instructions to the ai. this file should be placed in your project root and will be automatically referenced during all interactions with avante.
+
+The `avante.md` file allows you to provide project-specific context and instructions to the ai. this file should be placed in your project root and will be automatically referenced during all interactions with avante.
+
+The `avante.md` file allows you to provide project-specific context and instructions to the ai. this file should be placed in your project root and will be automatically referenced during all interactions with avante.
+
+The `avante.md` file allows you to provide project-specific context and instructions to the ai. this file should be placed in your project root and will be automatically referenced during all interactions with avante.
+
+The `avante.md` file allows you to provide project-specific context and instructions to the ai. this file should be placed in your project root and will be automatically referenced during all interactions with avante.
+
+The `avante.md` file allows you to provide project-specific context and instructions to the ai. this file should be placed in your project root and will be automatically referenced during all interactions with avante.
+
+The `avante.md` file allows you to provide project-specific context and instructions to the ai. this file should be placed in your project root and will be automatically referenced during all interactions with avante.
+
+Installation
+
+For building binary if you wish to build from source, then cargo is required. Otherwise curl and tar will be used to get prebuilt binary from GitHub.
+lazy.nvim (recommended)
+
+{
+  "yetone/avante.nvim",
+  -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
+  -- ⚠️ must add this setting! ! !
+  build = vim.fn.has("win32") ~= 0
+      and "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false"
+      or "make",
+  event = "VeryLazy",
+  version = false, -- Never set this value to "*"! Never!
+  ---@module 'avante'
+  ---@type avante.Config
+  opts = {
+    -- add any opts here
+    -- this file can contain specific instructions for your project
+    instructions_file = "avante.md",
+    -- for example
+    provider = "claude",
+    providers = {
+      claude = {
+        endpoint = "https://api.anthropic.com",
+        model = "claude-sonnet-4-20250514",
+        timeout = 30000, -- Timeout in milliseconds
+          extra_request_body = {
+            temperature = 0.75,
+            max_tokens = 20480,
+          },
+      },
+      moonshot = {
+        endpoint = "https://api.moonshot.ai/v1",
+        model = "kimi-k2-0711-preview",
+        timeout = 30000, -- Timeout in milliseconds
+        extra_request_body = {
+          temperature = 0.75,
+          max_tokens = 32768,
+        },
+      },
+    },
+  },
+  dependencies = {
+    "nvim-lua/plenary.nvim",
+    "MunifTanjim/nui.nvim",
+    --- The below dependencies are optional,
+    "echasnovski/mini.pick", -- for file_selector provider mini.pick
+    "nvim-telescope/telescope.nvim", -- for file_selector provider telescope
+    "hrsh7th/nvim-cmp", -- autocompletion for avante commands and mentions
+    "ibhagwan/fzf-lua", -- for file_selector provider fzf
+    "stevearc/dressing.nvim", -- for input provider dressing
+    "folke/snacks.nvim", -- for input provider snacks
+    "nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
+    "zbirenbaum/copilot.lua", -- for providers='copilot'
+    {
+      -- support for image pasting
+      "HakonHarnes/img-clip.nvim",
+      event = "VeryLazy",
+      opts = {
+        -- recommended settings
+        default = {
+          embed_image_as_base64 = false,
+          prompt_for_file_name = false,
+          drag_and_drop = {
+            insert_mode = true,
+          },
+          -- required for Windows users
+          use_absolute_path = true,
+        },
+      },
+    },
+    {
+      -- Make sure to set this up properly if you have lazy=true
+      'MeanderingProgrammer/render-markdown.nvim',
+      opts = {
+        file_types = { "markdown", "Avante" },
+      },
+      ft = { "markdown", "Avante" },
+    },
+  },
+}
+
+lazy.nvim (recommended)
+
+{
+  "yetone/avante.nvim",
+  -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
+  -- ⚠️ must add this setting! ! !
+  build = vim.fn.has("win32") ~= 0
+      and "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false"
+      or "make",
+  event = "VeryLazy",
+  version = false, -- Never set this value to "*"! Never!
+  ---@module 'avante'
+  ---@type avante.Config
+  opts = {
+    -- add any opts here
+    -- this file can contain specific instructions for your project
+    instructions_file = "avante.md",
+    -- for example
+    provider = "claude",
+    providers = {
+      claude = {
+        endpoint = "https://api.anthropic.com",
+        model = "claude-sonnet-4-20250514",
+        timeout = 30000, -- Timeout in milliseconds
+          extra_request_body = {
+            temperature = 0.75,
+            max_tokens = 20480,
+          },
+      },
+      moonshot = {
+        endpoint = "https://api.moonshot.ai/v1",
+        model = "kimi-k2-0711-preview",
+        timeout = 30000, -- Timeout in milliseconds
+        extra_request_body = {
+          temperature = 0.75,
+          max_tokens = 32768,
+        },
+      },
+    },
+  },
+  dependencies = {
+    "nvim-lua/plenary.nvim",
+    "MunifTanjim/nui.nvim",
+    --- The below dependencies are optional,
+    "echasnovski/mini.pick", -- for file_selector provider mini.pick
+    "nvim-telescope/telescope.nvim", -- for file_selector provider telescope
+    "hrsh7th/nvim-cmp", -- autocompletion for avante commands and mentions
+    "ibhagwan/fzf-lua", -- for file_selector provider fzf
+    "stevearc/dressing.nvim", -- for input provider dressing
+    "folke/snacks.nvim", -- for input provider snacks
+    "nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
+    "zbirenbaum/copilot.lua", -- for providers='copilot'
+    {
+      -- support for image pasting
+      "HakonHarnes/img-clip.nvim",
+      event = "VeryLazy",
+      opts = {
+        -- recommended settings
+        default = {
+          embed_image_as_base64 = false,
+          prompt_for_file_name = false,
+          drag_and_drop = {
+            insert_mode = true,
+          },
+          -- required for Windows users
+          use_absolute_path = true,
+        },
+      },
+    },
+    {
+      -- Make sure to set this up properly if you have lazy=true
+      'MeanderingProgrammer/render-markdown.nvim',
+      opts = {
+        file_types = { "markdown", "Avante" },
+      },
+      ft = { "markdown", "Avante" },
+    },
+  },
+}
+
+vim-plug
+
+vim-plug
+
+mini.deps
+
+mini.deps
+
+Packer
+
+Packer
+
+Home Manager
+
+Home Manager
+
+Nixvim
+
+Nixvim
+
+Lua
+
+Lua
+
+Important
+
+avante.nvim is currently only compatible with Neovim 0.10.1 or later. Please ensure that your Neovim version meets these requirements before proceeding.
+
+Note
+
+When loading the plugin synchronously, we recommend requireing it sometime after your colorscheme.
+
+Note
+
+Recommended Neovim options:
+
+-- views can only be fully collapsed with the global statusline
+vim.opt.laststatus = 3
+
+Tip
+
+Any rendering plugins that support markdown should work with Avante as long as you add the supported filetype Avante. See #175 and this comment for more information.
+Default setup configuration
+
+See config.lua#L9 for the full config
+Default configuration
+
+Default configuration
+
+Blink.cmp users
+
+For blink cmp users (nvim-cmp alternative) view below instruction for configuration This is achieved by emulating nvim-cmp using blink.compat or you can use Kaiser-Yang/blink-cmp-avante.
+Lua
+
+Lua
+
+Lua
+
+Lua
+
+Lua
+
+Lua
+
+Lua
+
+Lua
+
+Lua
+
+Lua
+
+Lua
+
+Lua
+
+Lua
+
+Lua
+
+Lua
+
+Lua
+
+Lua
+
+Usage
+Basic Functionality
+
+Given its early stage, avante.nvim currently supports the following basic functionalities:
+
+Important
+
+For most consistency between neovim session, it is recommended to set the environment variables in your shell file. By default, Avante will prompt you at startup to input the API key for the provider you have selected.
+
+Scoped API Keys (Recommended for Isolation)
+
+Avante now supports scoped API keys, allowing you to isolate API keys specifically for Avante without affecting other applications. Simply prefix any API key with AVANTE_:
+
+# Scoped keys (recommended)
+export AVANTE_ANTHROPIC_API_KEY=your-claude-api-key
+export AVANTE_OPENAI_API_KEY=your-openai-api-key
+export AVANTE_AZURE_OPENAI_API_KEY=your-azure-api-key
+export AVANTE_GEMINI_API_KEY=your-gemini-api-key
+export AVANTE_CO_API_KEY=your-cohere-api-key
+export AVANTE_AIHUBMIX_API_KEY=your-aihubmix-api-key
+export AVANTE_MOONSHOT_API_KEY=your-moonshot-api-key
+
+Global API Keys (Legacy)
+
+You can still use the traditional global API keys if you prefer:
+
+For Claude:
+
+export ANTHROPIC_API_KEY=your-api-key
+
+For OpenAI:
+
+export OPENAI_API_KEY=your-api-key
+
+For Azure OpenAI:
+
+export AZURE_OPENAI_API_KEY=your-api-key
+
+For Amazon Bedrock:
+
+You can specify the BEDROCK_KEYS environment variable to set credentials. When this variable is not specified, bedrock will use the default AWS credentials chain (see below).
+
+export BEDROCK_KEYS=aws_access_key_id,aws_secret_access_key,aws_region[,aws_session_token]
+
+Note: The aws_session_token is optional and only needed when using temporary AWS credentials
+
+Alternatively Bedrock tries to resolve AWS credentials using the Default Credentials Provider Chain. This means you can have credentials e.g. configured via the AWS CLI, stored in your ~/.aws/profile, use AWS SSO etc. In this case aws_region and optionally aws_profile should be specified via the bedrock config, e.g.:
+
+bedrock = {
+  model = "us.anthropic.claude-3-5-sonnet-20241022-v2:0",
+  aws_profile = "bedrock",
+  aws_region = "us-east-1",
+},
+
+Note: Bedrock requires the AWS CLI to be installed on your system.
+
+    Open a code file in Neovim.
+    Use the :AvanteAsk command to query the AI about the code.
+    Review the AI's suggestions.
+    Apply the recommended changes directly to your code with a simple command or key binding.
+
+Note: The plugin is still under active development, and both its functionality and interface are subject to significant changes. Expect some rough edges and instability as the project evolves.
+Key Bindings
+
+The following key bindings are available for use with avante.nvim:
+Key Binding 	Description
+Sidebar 	
+]p 	next prompt
+[p 	previous prompt
+A 	apply all
+a 	apply cursor
+r 	retry user request
+e 	edit user request
+<Tab> 	switch windows
+<S-Tab> 	reverse switch windows
+d 	remove file
+@ 	add file
+q 	close sidebar
+Leaderaa 	show sidebar
+Leaderat 	toggle sidebar visibility
+Leaderar 	refresh sidebar
+Leaderaf 	switch sidebar focus
+Suggestion 	
+Leadera? 	select model
+Leaderan 	new ask
+Leaderae 	edit selected blocks
+LeaderaS 	stop current AI request
+Leaderah 	select between chat histories
+<M-l> 	accept suggestion
+<M-]> 	next suggestion
+<M-[> 	previous suggestion
+<C-]> 	dismiss suggestion
+Leaderad 	toggle debug mode
+Leaderas 	toggle suggestion display
+LeaderaR 	toggle repomap
+Files 	
+Leaderac 	add current buffer to selected files
+LeaderaB 	add all buffer files to selected files
+Diff 	
+co 	choose ours
+ct 	choose theirs
+ca 	choose all theirs
+cb 	choose both
+cc 	choose cursor
+]x 	move to next conflict
+[x 	move to previous conflict
+Confirm 	
+Ctrlwf 	focus confirm window
+c 	confirm code
+r 	confirm response
+i 	confirm input
+
+Note
+
+If you are using lazy.nvim, then all keymap here will be safely set, meaning if <leader>aa is already binded, then avante.nvim won't bind this mapping. In this case, user will be responsible for setting up their own. See notes on keymaps for more details.
+Neotree shortcut
+
+In the neotree sidebar, you can also add a new keyboard shortcut to quickly add file/folder to Avante Selected Files.
+Neotree configuration
+
+Neotree configuration
+
+Commands
+Command 	Description 	Examples
+:AvanteAsk [question] [position] 	Ask AI about your code. Optional position set window position and ask enable/disable direct asking mode 	:AvanteAsk position=right Refactor this code here
+:AvanteBuild 	Build dependencies for the project 	
+:AvanteChat 	Start a chat session with AI about your codebase. Default is ask=false 	
+:AvanteChatNew 	Start a new chat session. The current chat can be re-opened with the chat session selector 	
+:AvanteHistory 	Opens a picker for your previous chat sessions 	
+:AvanteClear 	Clear the chat history for your current chat session 	
+:AvanteEdit 	Edit the selected code blocks 	
+:AvanteFocus 	Switch focus to/from the sidebar 	
+:AvanteRefresh 	Refresh all Avante windows 	
+:AvanteStop 	Stop the current AI request 	
+:AvanteSwitchProvider 	Switch AI provider (e.g. openai) 	
+:AvanteShowRepoMap 	Show repo map for project's structure 	
+:AvanteToggle 	Toggle the Avante sidebar 	
+:AvanteModels 	Show model list 	
+:AvanteSwitchSelectorProvider 	Switch avante selector provider (e.g. native, telescope, fzf_lua, mini_pick, snacks) 	
+Highlight Groups
+Highlight Group 	Description 	Notes
+AvanteTitle 	Title 	
+AvanteReversedTitle 	Used for rounded border 	
+AvanteSubtitle 	Selected code title 	
+AvanteReversedSubtitle 	Used for rounded border 	
+AvanteThirdTitle 	Prompt title 	
+AvanteReversedThirdTitle 	Used for rounded border 	
+AvanteConflictCurrent 	Current conflict highlight 	Default to Config.highlights.diff.current
+AvanteConflictIncoming 	Incoming conflict highlight 	Default to Config.highlights.diff.incoming
+AvanteConflictCurrentLabel 	Current conflict label highlight 	Default to shade of AvanteConflictCurrent
+AvanteConflictIncomingLabel 	Incoming conflict label highlight 	Default to shade of AvanteConflictIncoming
+AvantePopupHint 	Usage hints in popup menus 	
+AvanteInlineHint 	The end-of-line hint displayed in visual mode 	
+AvantePromptInput 	The body highlight of the prompt input 	
+AvantePromptInputBorder 	The border highlight of the prompt input 	Default to NormalFloat
+
+See highlights.lua for more information
+Fast Apply
+
+Fast Apply is a feature that enables instant code edits with high accuracy by leveraging specialized models. It replicates Cursor's instant apply functionality, allowing for seamless code modifications without the typical delays associated with traditional code generation.
+Purpose and Benefits
+
+Fast Apply addresses the common pain point of slow code application in AI-assisted development. Instead of waiting for a full language model to process and apply changes, Fast Apply uses a specialized "apply model" that can quickly and accurately merge code edits with 96-98% accuracy at speeds of 2500-4500+ tokens per second.
+
+Key benefits:
+
+    Instant application: Code changes are applied immediately without noticeable delays
+    High accuracy: Specialized models achieve 96-98% accuracy for code edits
+    Seamless workflow: Maintains the natural flow of development without interruptions
+    Large context support: Handles up to 16k tokens for both input and output
+
+Configuration
+
+To enable Fast Apply, you need to:
+
+    Enable Fast Apply in your configuration:
+
+      behaviour = {
+        enable_fastapply = true,  -- Enable Fast Apply feature
+      },
+      -- ... other configuration
+
+Get your Morph API key: Go to morphllm.com and create an account and get the API key.
+
+Set your Morph API key:
+
+export MORPH_API_KEY="your-api-key"
+
+Change Morph model:
+
+providers = {
+  morph = {
+    model = "morph-v3-large",
+  },
+}
+
+Model Options
+
+Morph provides different models optimized for different use cases:
+Model 	Speed 	Accuracy 	Context Limit
+morph-v3-fast 	4500+ tok/sec 	96% 	16k tokens
+morph-v3-large 	2500+ tok/sec 	98% 	16k tokens
+auto 	2500-4500 tok/sec 	98% 	16k tokens
+How It Works
+
+When Fast Apply is enabled and a Morph provider is configured, avante.nvim will:
+
+    Use the edit_file tool for code modifications instead of traditional tools
+    Send the original code, edit instructions, and update snippet to the Morph API
+    Receive the fully merged code back from the specialized apply model
+    Apply the changes directly to your files with high accuracy
+
+The process uses a specialized prompt format that includes:
+
+    <instructions>: Clear description of what changes to make
+    <code>: The original code content
+    <update>: The specific changes using truncation markers (// ... existing code ...)
+
+This approach ensures that the apply model can quickly and accurately merge your changes without the overhead of full code generation.
+Ollama
+
+ollama is a first-class provider for avante.nvim. You can use it by setting provider = "ollama" in the configuration, and set the model field in ollama to the model you want to use. For example:
+
+provider = "ollama",
+providers = {
+  ollama = {
+    endpoint = "http://localhost:11434",
+    model = "qwq:32b",
+  },
+}
+
+ACP Support
+
+Avante.nvim now supports the Agent Client Protocol (ACP), enabling seamless integration with AI agents that follow this standardized communication protocol. ACP provides a unified way for AI agents to interact with development environments, offering enhanced capabilities for code editing, file operations, and tool execution.
+What is ACP?
+
+The Agent Client Protocol (ACP) is a standardized protocol that enables AI agents to communicate with development tools and environments. It provides:
+
+    Standardized Communication: A unified JSON-RPC based protocol for agent-client interactions
+    Tool Integration: Support for various development tools like file operations, code execution, and search
+    Session Management: Persistent sessions that maintain context across interactions
+    Permission System: Granular control over what agents can access and modify
+
+Enabling ACP
+
+To use ACP-compatible agents with Avante.nvim, you need to configure an ACP provider. Here are the currently supported ACP agents:
+Gemini CLI with ACP
+
+{
+  provider = "gemini-cli",
+  -- other configuration options...
+}
+
+Claude Code with ACP
+
+{
+  provider = "claude-code",
+  -- other configuration options...
+}
+
+ACP Configuration
+
+ACP providers are configured in the acp_providers section of your configuration:
+
+{
+  acp_providers = {
+    ["gemini-cli"] = {
+      command = "gemini",
+      args = { "--experimental-acp" },
+      env = {
+        NODE_NO_WARNINGS = "1",
+        GEMINI_API_KEY = os.getenv("GEMINI_API_KEY"),
+      },
+    },
+    ["claude-code"] = {
+      command = "npx",
+      args = { "@zed-industries/claude-code-acp" },
+      env = {
+        NODE_NO_WARNINGS = "1",
+        ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY"),
+      },
+    },
+  },
+  -- other configuration options...
+}
+
+Prerequisites
+
+Before using ACP agents, ensure you have the required tools installed:
+
+    For Gemini CLI: Install the gemini CLI tool and set your GEMINI_API_KEY
+    For Claude Code: Install the acp-claude-code package via npm and set your ANTHROPIC_API_KEY
+
+ACP vs Traditional Providers
+
+ACP providers offer several advantages over traditional API-based providers:
+
+    Enhanced Tool Access: Agents can directly interact with your file system, run commands, and access development tools
+    Persistent Context: Sessions maintain state across multiple interactions
+    Fine-grained Permissions: Control exactly what agents can access and modify
+    Standardized Protocol: Compatible with any ACP-compliant agent
+
+Custom providers
+
+Avante provides a set of default providers, but users can also create their own providers.
+
+For more information, see Custom Providers
+RAG Service
+
+Avante provides a RAG service, which is a tool for obtaining the required context for the AI to generate the codes. By default, it is not enabled. You can enable it this way:
+
+  rag_service = { -- RAG Service configuration
+    enabled = false, -- Enables the RAG service
+    host_mount = os.getenv("HOME"), -- Host mount path for the rag service (Docker will mount this path)
+    runner = "docker", -- Runner for the RAG service (can use docker or nix)
+    llm = { -- Language Model (LLM) configuration for RAG service
+      provider = "openai", -- LLM provider
+      endpoint = "https://api.openai.com/v1", -- LLM API endpoint
+      api_key = "OPENAI_API_KEY", -- Environment variable name for the LLM API key
+      model = "gpt-4o-mini", -- LLM model name
+      extra = nil, -- Additional configuration options for LLM
+    },
+    embed = { -- Embedding model configuration for RAG service
+      provider = "openai", -- Embedding provider
+      endpoint = "https://api.openai.com/v1", -- Embedding API endpoint
+      api_key = "OPENAI_API_KEY", -- Environment variable name for the embedding API key
+      model = "text-embedding-3-large", -- Embedding model name
+      extra = nil, -- Additional configuration options for the embedding model
+    },
+    docker_extra_args = "", -- Extra arguments to pass to the docker command
+  },
+
+The RAG Service can currently configure the LLM and embedding models separately. In the llm and embed configuration blocks, you can set the following fields:
+
+    provider: Model provider (e.g., "openai", "ollama", "dashscope", and "openrouter")
+    endpoint: API endpoint
+    api_key: Environment variable name for the API key
+    model: Model name
+    extra: Additional configuration options
+
+For detailed configuration of different model providers, you can check here.
+
+Additionally, RAG Service also depends on Docker! (For macOS users, OrbStack is recommended as a Docker alternative).
+
+host_mount is the path that will be mounted to the container, and the default is the home directory. The mount is required for the RAG service to access the files in the host machine. It is up to the user to decide if you want to mount the whole / directory, just the project directory, or the home directory. If you plan using avante and RAG event for projects stored outside your home directory, you will need to set the host_mount to the root directory of your file system.
+
+The mount will be read only.
+
+After changing the rag_service configuration, you need to manually delete the rag_service container to ensure the new configuration is used: docker rm -fv avante-rag-service
+Web Search Engines
+
+Avante's tools include some web search engines, currently support:
+
+    Tavily
+    SerpApi - Search API
+    Google's Programmable Search Engine
+    Kagi
+    Brave Search
+    SearXNG
+
+The default is Tavily, and can be changed through configuring Config.web_search_engine.provider:
+
+web_search_engine = {
+  provider = "tavily", -- tavily, serpapi, google, kagi, brave, or searxng
+  proxy = nil, -- proxy support, e.g., http://127.0.0.1:7890
+}
+
+Environment variables required for providers:
+
+    Tavily: TAVILY_API_KEY
+    SerpApi: SERPAPI_API_KEY
+    Google:
+        GOOGLE_SEARCH_API_KEY as the API key
+        GOOGLE_SEARCH_ENGINE_ID as the search engine ID
+    Kagi: KAGI_API_KEY as the API Token
+    Brave Search: BRAVE_API_KEY as the API key
+    SearXNG: SEARXNG_API_URL as the API URL
+
+Disable Tools
+
+Avante enables tools by default, but some LLM models do not support tools. You can disable tools by setting disable_tools = true for the provider. For example:
+
+providers = {
+  claude = {
+    endpoint = "https://api.anthropic.com",
+    model = "claude-sonnet-4-20250514",
+    timeout = 30000, -- Timeout in milliseconds
+    disable_tools = true, -- disable tools!
+    extra_request_body = {
+      temperature = 0,
+      max_tokens = 4096,
+    }
+  }
+}
+
+In case you want to ban some tools to avoid its usage (like Claude 3.7 overusing the python tool) you can disable just specific tools
+
+{
+  disabled_tools = { "python" },
+}
+
+Tool list
+
+    rag_search, python, git_diff, git_commit, glob, search_keyword, read_file_toplevel_symbols, read_file, create_file, move_path, copy_path, delete_path, create_dir, bash, web_search, fetch
+
+Custom Tools
+
+Avante allows you to define custom tools that can be used by the AI during code generation and analysis. These tools can execute shell commands, run scripts, or perform any custom logic you need.
+Example: Go Test Runner
+Here's an example of a custom tool that runs Go unit tests:
+
+Here's an example of a custom tool that runs Go unit tests:
+
+MCP
+
+Now you can integrate MCP functionality for Avante through mcphub.nvim. For detailed documentation, please refer to mcphub.nvim
+Custom prompts
+
+By default, avante.nvim provides three different modes to interact with: planning, editing, and suggesting, followed with three different prompts per mode.
+
+    planning: Used with require("avante").toggle() on sidebar
+    editing: Used with require("avante").edit() on selection codeblock
+    suggesting: Used with require("avante").get_suggestion():suggest() on Tab flow.
+    cursor-planning: Used with require("avante").toggle() on Tab flow, but only when cursor planning mode is enabled.
+
+Users can customize the system prompts via Config.system_prompt or Config.override_prompt_dir.
+
+Config.system_prompt allows you to set a global system prompt. We recommend calling this in a custom Autocmds depending on your need:
+
+vim.api.nvim_create_autocmd("User", {
+  pattern = "ToggleMyPrompt",
+  callback = function() require("avante.config").override({system_prompt = "MY CUSTOM SYSTEM PROMPT"}) end,
+})
+
+vim.keymap.set("n", "<leader>am", function() vim.api.nvim_exec_autocmds("User", { pattern = "ToggleMyPrompt" }) end, { desc = "avante: toggle my prompt" })
+
+Config.override_prompt_dir allows you to specify a directory containing your own custom prompt templates, which will override the built-in templates. This is useful if you want to maintain a set of custom prompts outside of your Neovim configuration. It can be a string representing the directory path, or a function that returns a string representing the directory path.
+
+-- Example: Override with prompts from a specific directory
+require("avante").setup({
+  override_prompt_dir = vim.fn.expand("~/.config/nvim/avante_prompts"),
+})
+
+-- Example: Override with prompts from a function (dynamic directory)
+require("avante").setup({
+  override_prompt_dir = function()
+    -- Your logic to determine the prompt directory
+    return vim.fn.expand("~/.config/nvim/my_dynamic_prompts")
+  end,
+})
+
+Warning
+
+If you customize base.avanterules, please ensure that {% block custom_prompt %}{% endblock %} and {% block extra_prompt %}{% endblock %} exist, otherwise the entire plugin may become unusable. If you are unsure about the specific reasons or what you are doing, please do not override the built-in prompts. The built-in prompts work very well.
+
+If you wish to custom prompts for each mode, avante.nvim will check for project root based on the given buffer whether it contains the following patterns: *.{mode}.avanterules.
+
+The rules for root hierarchy:
+
+    lsp workspace folders
+    lsp root_dir
+    root pattern of filename of the current buffer
+    root pattern of cwd
+
+You can also configure custom directories for your avanterules files using the rules option:
+
+require('avante').setup({
+  rules = {
+    project_dir = '.avante/rules', -- relative to project root, can also be an absolute path
+    global_dir = '~/.config/avante/rules', -- absolute path
+  },
+})
+
+The loading priority is as follows:
+
+    rules.project_dir
+    rules.global_dir
+    Project root
+
+Example folder structure for custom prompt
+
+Example folder structure for custom prompt
+
+Important
+
+*.avanterules is a jinja template file, in which will be rendered using minijinja. See templates for example on how to extend current templates.
+Integration
+
+Avante.nvim can be extended to work with other plugins by using its extension modules. Below is an example of integrating Avante with nvim-tree, allowing you to select or deselect files directly from the NvimTree UI:
+
+{
+    "yetone/avante.nvim",
+    event = "VeryLazy",
+    keys = {
+        {
+            "<leader>a+",
+            function()
+                local tree_ext = require("avante.extensions.nvim_tree")
+                tree_ext.add_file()
+            end,
+            desc = "Select file in NvimTree",
+            ft = "NvimTree",
+        },
+        {
+            "<leader>a-",
+            function()
+                local tree_ext = require("avante.extensions.nvim_tree")
+                tree_ext.remove_file()
+            end,
+            desc = "Deselect file in NvimTree",
+            ft = "NvimTree",
+        },
+    },
+    opts = {
+        --- other configurations
+        selector = {
+            exclude_auto_select = { "NvimTree" },
+        },
+    },
+}
+
+TODOs
+
+    Chat with current file
+    Apply diff patch
+    Chat with the selected block
+    Slash commands
+    Edit the selected block
+    Smart Tab (Cursor Flow)
+    Chat with project (You can use @codebase to chat with the whole project)
+    Chat with selected files
+    Tool use
+    MCP
+    ACP
+    Better codebase indexing
+
+Roadmap
+
+    Enhanced AI Interactions: Improve the depth of AI analysis and recommendations for more complex coding scenarios.
+    LSP + Tree-sitter + LLM Integration: Integrate with LSP and Tree-sitter and LLM to provide more accurate and powerful code suggestions and analysis.
+
+FAQ
+How to disable agentic mode?
+
+Avante.nvim provides two interaction modes:
+
+    agentic (default): Uses AI tools to automatically generate and apply code changes
+    legacy: Uses the traditional planning method without automatic tool execution
+
+To disable agentic mode and switch to legacy mode, update your configuration:
+
+{
+  mode = "legacy", -- Switch from "agentic" to "legacy"
+  -- ... your other configuration options
+}
+
+What's the difference?
+
+    Agentic mode: AI can automatically execute tools like file operations, bash commands, web searches, etc. to complete complex tasks
+    Legacy mode: AI provides suggestions and plans but requires manual approval for all actions
+
+When should you use legacy mode?
+
+    If you prefer more control over what actions the AI takes
+    If you're concerned about security with automatic tool execution
+    If you want to manually review each step before applying changes
+    If you're working in a sensitive environment where automatic code changes aren't desired
+
+You can also disable specific tools while keeping agentic mode enabled by configuring disabled_tools:
+
+{
+  mode = "agentic",
+  disabled_tools = { "bash", "python" }, -- Disable specific tools
+  -- ... your other configuration options
+}
+
+Contributing
+
+Contributions to avante.nvim are welcome! If you're interested in helping out, please feel free to submit pull requests or open issues. Before contributing, ensure that your code has been thoroughly tested.
+
+See wiki for more recipes and tricks.
+Acknowledgments
+
+We would like to express our heartfelt gratitude to the contributors of the following open-source projects, whose code has provided invaluable inspiration and reference for the development of avante.nvim:
+Nvim Plugin 	License 	Functionality 	Location
+git-conflict.nvim 	No License 	Diff comparison functionality 	lua/avante/diff.lua
+ChatGPT.nvim 	Apache 2.0 License 	Calculation of tokens count 	lua/avante/utils/tokens.lua
+img-clip.nvim 	MIT License 	Clipboard image support 	lua/avante/clipboard.lua
+copilot.lua 	MIT License 	Copilot support 	lua/avante/providers/copilot.lua
+jinja.vim 	MIT License 	Template filetype support 	syntax/jinja.vim
+codecompanion.nvim 	MIT License 	Secrets logic support 	lua/avante/providers/init.lua
+aider 	Apache 2.0 License 	Planning mode user prompt 	lua/avante/templates/planning.avanterules
+
+The high quality and ingenuity of these projects' source code have been immensely beneficial throughout our development process. We extend our sincere thanks and respect to the authors and contributors of these projects. It is the selfless dedication of the open-source community that drives projects like avante.nvim forward.
+Business Sponsors
+Meshy AI
+Meshy AI
+ 
+The #1 AI 3D Model Generator for Creators
+	BabelTower API
+BabelTower API
+ 
+No account needed, use any model instantly
+License
+
+avante.nvim is licensed under the Apache 2.0 License. For more details, please refer to the LICENSE file.
+Star History
+
