@@ -1,82 +1,64 @@
 -- ========================================================================================
--- Visual Adjustments - Toggle UI elements that might be distracting
+-- Visual Toggles - Alterna elementos de la UI para una experiencia sin distracciones.
+-- Gestionado como un plugin para carga diferida.
 -- ========================================================================================
 
--- Function to toggle cursor line
-local function toggle_cursorline()
-  vim.opt.cursorline = not vim.opt.cursorline:get()
-  local status = vim.opt.cursorline:get() and "enabled" or "disabled"
-  vim.notify("Cursor line " .. status, vim.log.levels.INFO)
-end
+return {
+	"folke/which-key.nvim", -- Dependencia para asegurar que los atajos se registren
+	event = "VeryLazy",
+	config = function()
+		local M = {}
 
--- Function to toggle treesitter context
-local function toggle_context()
-  local status_ok, context = pcall(require, "treesitter-context")
-  if status_ok then
-    context.toggle()
-  else
-    vim.notify("Treesitter context not available", vim.log.levels.WARN)
-  end
-end
+		-- Función para alternar la línea del cursor
+		M.toggle_cursorline = function()
+			vim.opt.cursorline = not vim.opt.cursorline:get()
+			vim.notify(
+				"Línea del cursor " .. (vim.opt.cursorline:get() and "activada" or "desactivada"),
+				vim.log.levels.INFO
+			)
+		end
 
--- Function to toggle relative numbers
-local function toggle_relative_numbers()
-  vim.opt.relativenumber = not vim.opt.relativenumber:get()
-  local status = vim.opt.relativenumber:get() and "enabled" or "disabled"
-  vim.notify("Relative numbers " .. status, vim.log.levels.INFO)
-end
+		-- Función para alternar el contexto de treesitter
+		M.toggle_context = function()
+			local status_ok, context = pcall(require, "treesitter-context")
+			if status_ok then
+				context.toggle()
+			else
+				vim.notify("Contexto de Treesitter no disponible", vim.log.levels.WARN)
+			end
+		end
 
--- Function to toggle color column
-local function toggle_colorcolumn()
-  local current = vim.opt.colorcolumn:get()
-  if #current == 0 then
-    -- Activate based on filetype
-    local ft = vim.bo.filetype
-    if ft == "python" then
-      vim.opt_local.colorcolumn = "89"
-    elseif ft == "markdown" then
-      vim.opt_local.colorcolumn = "81"
-    else
-      vim.opt_local.colorcolumn = "80"
-    end
-    vim.notify("Color column enabled", vim.log.levels.INFO)
-  else
-    vim.opt_local.colorcolumn = ""
-    vim.notify("Color column disabled", vim.log.levels.INFO)
-  end
-end
+		-- Función para alternar números relativos
+		M.toggle_relative_numbers = function()
+			vim.opt.relativenumber = not vim.opt.relativenumber:get()
+			vim.notify(
+				"Números relativos " .. (vim.opt.relativenumber:get() and "activados" or "desactivados"),
+				vim.log.levels.INFO
+			)
+		end
 
--- Function to toggle all visual distractions
-local function toggle_focus_mode()
-  -- Toggle multiple UI elements for a cleaner look
-  local current_cursorline = vim.opt.cursorline:get()
-  
-  vim.opt.cursorline = not current_cursorline
-  vim.opt.relativenumber = not current_cursorline
-  
-  -- Toggle treesitter context
-  local status_ok, context = pcall(require, "treesitter-context")
-  if status_ok then
-    if current_cursorline then
-      context.disable()
-    else
-      context.enable()
-    end
-  end
-  
-  local mode = current_cursorline and "Focus Mode ON" or "Focus Mode OFF"
-  vim.notify(mode .. " - Distractions " .. (current_cursorline and "hidden" or "visible"), vim.log.levels.INFO)
-end
+		-- Función para alternar el modo de enfoque
+		M.toggle_focus_mode = function()
+			local is_focused = not vim.opt.cursorline:get()
+			vim.opt.cursorline = is_focused
+			vim.opt.relativenumber = is_focused
 
--- Setup keymaps for visual toggles
-vim.keymap.set('n', '<leader>tl', toggle_cursorline, { desc = "Toggle cursor line" })
-vim.keymap.set('n', '<leader>tc', toggle_context, { desc = "Toggle treesitter context" })
-vim.keymap.set('n', '<leader>tn', toggle_relative_numbers, { desc = "Toggle relative numbers" })
-vim.keymap.set('n', '<leader>tv', toggle_colorcolumn, { desc = "Toggle color column (vertical line)" })
-vim.keymap.set('n', '<leader>tf', toggle_focus_mode, { desc = "Toggle focus mode (hide distractions)" })
+			local status_ok, context = pcall(require, "treesitter-context")
+			if status_ok then
+				if is_focused then
+					context.enable()
+				else
+					context.disable()
+				end
+			end
 
--- Option to start with focus mode if desired
--- Uncomment the line below to start with minimal distractions
--- vim.defer_fn(toggle_focus_mode, 100)
+			vim.notify("Modo Enfoque " .. (is_focused and "Activado" or "Desactivado"), vim.log.levels.INFO)
+		end
 
-return {}
+		-- Configura los atajos de teclado
+		vim.keymap.set("n", "<leader>tl", M.toggle_cursorline, { desc = "Alternar línea del cursor" })
+		vim.keymap.set("n", "<leader>tc", M.toggle_context, { desc = "Alternar contexto de Treesitter" })
+		vim.keymap.set("n", "<leader>tn", M.toggle_relative_numbers, { desc = "Alternar números relativos" })
+		vim.keymap.set("n", "<leader>tf", M.toggle_focus_mode, { desc = "Alternar modo de enfoque" })
+	end,
+}

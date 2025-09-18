@@ -218,6 +218,26 @@ return {
       { "<leader>rm", desc = "Run make" },
       { "<leader>rr", desc = "Run current file" },
       { "<leader>rt", desc = "Run tests" },
+      
+      -- Yazi file manager
+      { "<leader>fy", desc = "Open Yazi" },
+      { "<leader>fY", desc = "Resume Yazi" },
+      
+      -- Colorizer
+      { "<leader>ca", desc = "Attach Colorizer" },
+      { "<leader>cd", desc = "Detach Colorizer" },
+      
+      -- Notifications
+      { "<leader>n", group = "notifications" },
+      { "<leader>nh", desc = "Notification History" },
+      { "<leader>nc", desc = "Clear Notifications" },
+      { "<leader>un", desc = "Dismiss Notifications" },
+      
+      -- Guess indent
+      { "<leader>ci", desc = "Guess Indentation" },
+      
+      -- Copilot
+      { "<leader>cp", desc = "Copilot Panel" },
     },
   },
   config = function(_, opts)
@@ -245,6 +265,7 @@ return {
           { "<leader>rp", "<cmd>!python %<cr>", desc = "Run Python file", buffer = true },
           { "<leader>rd", function() vim.cmd("!python -m pdb " .. vim.fn.expand("%")) end, desc = "Debug Python file", buffer = true },
           { "<leader>aP", desc = "Python Code Review", buffer = true },
+          { "<leader>ci", "<cmd>GuessIndent<cr>", desc = "Guess Python indentation", buffer = true },
         })
       end,
     })
@@ -255,6 +276,7 @@ return {
       callback = function()
         wk.add({
           { "<leader>rs", "<cmd>!chmod +x % && ./%<cr>", desc = "Run shell script", buffer = true },
+          { "<leader>aS", desc = "Shell script review", buffer = true },
         })
       end,
     })
@@ -289,8 +311,31 @@ return {
       callback = function()
         wk.add({
           { "<leader>cv", desc = "Validate JSON/YAML", buffer = true },
+          { "<leader>ci", "<cmd>GuessIndent<cr>", desc = "Guess indentation", buffer = true },
+        })
+      end,
+    })
+    
+    -- CSS/SCSS specific mappings
+    vim.api.nvim_create_autocmd("FileType", {
+      pattern = { "css", "scss", "sass", "less" },
+      callback = function()
+        wk.add({
+          { "<leader>uc", "<cmd>ColorizerToggle<cr>", desc = "Toggle color preview", buffer = true },
+          { "<leader>uC", "<cmd>ColorizerReloadAllBuffers<cr>", desc = "Reload colorizer", buffer = true },
+        })
+      end,
+    })
+    
+    -- HTML specific mappings
+    vim.api.nvim_create_autocmd("FileType", {
+      pattern = "html",
+      callback = function()
+        wk.add({
+          { "<leader>uc", "<cmd>ColorizerToggle<cr>", desc = "Toggle color preview", buffer = true },
         })
       end,
     })
   end,
 }
+

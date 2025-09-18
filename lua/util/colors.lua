@@ -6,14 +6,14 @@
 local M = {}
 
 -- ========================================================================================
--- Color Definitions (Catppuccin Mocha)
+-- Color Definitions
 -- ========================================================================================
 
 M.colors = {
   -- Special colors
   background = "#1e1e2e", -- Base
   foreground = "#cdd6f4", -- Text
-  cursor = "#f5e0dc",     -- Rosewater (soft cursor)
+  cursor     = "#f5e0dc", -- Rosewater (soft cursor)
 
   -- Standard colors (0-15)
   color0  = "#181825", -- Mantle
@@ -39,58 +39,59 @@ M.colors = {
 -- ========================================================================================
 
 M.ui = {
-  -- Background variants
-  bg_primary    = M.colors.background,
-  bg_secondary  = "#181825", -- Mantle
-  bg_tertiary   = "#11111b", -- Crust
-  bg_float      = "#1e1e2e", -- Base
-  bg_sidebar    = "#181825", -- Mantle
-  bg_statusline = "#313244", -- Surface0
-  bg_visual     = "#45475a", -- Surface1
-  bg_search     = "#585b70", -- Surface2
+  -- Background variants 
+  bg_primary = M.colors.background,
+  bg_secondary = "#181825", -- Mantle
+  bg_tertiary = "#11111b", -- Crust 
+  bg_float = "#1e1e2e", -- Base 
+  bg_sidebar = "#181825", -- Mantle 
+  bg_statusline = "#313244", -- Surface0 
+  bg_visual = "#45475a", -- Surface1 
+  bg_search = "#585b70", -- Surface2
+  
+  -- Foreground variants 
+  fg_primary = M.colors.foreground,
+  fg_secondary = "#a6adc8", -- Subtext0 
+  fg_tertiary = "#9399b2", -- Overlay2
+  fg_inactive = "#7f849c", -- Overlay1
+  fg_comment = "#6c7086", -- Overlay0
 
-  -- Foreground variants
-  fg_primary   = M.colors.foreground,
-  fg_secondary = "#a6adc8", -- Subtext0
-  fg_tertiary  = "#9399b2", -- Overlay2
-  fg_inactive  = "#7f849c", -- Overlay1
-  fg_comment   = "#6c7086", -- Overlay0
-
-  -- Accent colors
-  red     = "#f38ba8",
-  maroon  = "#eba0ac",
-  peach   = "#fab387",
-  yellow  = "#f9e2af",
-  green   = "#a6e3a1",
-  teal    = "#94e2d5",
-  sky     = "#89dceb",
+  -- Accent colors 
+  red = "#f38ba8",
+  maroon = "#eba0ac",
+  peach = "#fab387",
+  yellow = "#f9e2af",
+  green = "#a6e3a1",
+  teal = "#94e2d5",
+  sky = "#89dceb",
   sapphire= "#74c7ec",
-  blue    = "#89b4fa",
+  blue = "#89b4fa",
   lavender= "#b4befe",
-  mauve   = "#cba6f7",
-  pink    = "#f5c2e7",
+  mauve = "#cba6f7",
+  pink = "#f5c2e7",
   flamingo= "#f2cdcd",
   rosewater= "#f5e0dc",
 
-  -- Border colors
+  -- Border colors 
   border = "#585b70", -- Surface2
   border_highlight = "#89b4fa", -- Blue
 
-  -- Selection colors
-  selection   = "#45475a", -- Surface1
+  -- Selection colors 
+  selection = "#45475a", -- Surface1
   cursor_line = "#313244", -- Surface0
 
   -- Git colors
-  git_add    = "#a6e3a1",
+  git_add = "#a6e3a1",
   git_change = "#f9e2af",
   git_delete = "#f38ba8",
 
   -- Diagnostic colors
-  error   = "#f38ba8",
+  error = "#f38ba8",
   warning = "#f9e2af",
-  info    = "#89dceb",
-  hint    = "#b4befe",
+  info = "#89dceb",
+  hint = "#b4befe",
 }
+
 
 -- ========================================================================================
 -- Syntax Highlighting Colors
